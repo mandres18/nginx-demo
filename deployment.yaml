@@ -1,0 +1,30 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: nginx-harbor
+  namespace: default
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: nginx-harbor
+  template:
+    metadata:
+      labels:
+        app: nginx-harbor
+    spec:
+      imagePullSecrets:
+      - name: harbor-secret
+      containers:
+      - name: nginx
+        image: harbor.vstcloud.io/library/nginx-unpriv:v1
+        ports:
+        - containerPort: 8080
+        securityContext:
+          allowPrivilegeEscalation: false
+          runAsNonRoot: true
+          capabilities:
+            drop:
+              - ALL
+          seccompProfile:
+            type: RuntimeDefault
